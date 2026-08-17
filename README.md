@@ -17,3 +17,5 @@ chmod +x ~/.shortcuts/tg-ws-proxy-android-termux/*.sh
 rm -rf ~/.shortcuts/tg-ws-proxy-android-termux/{.git,README.md,LICENSE,install_proxy.sh}
 cd ~
 ```
+
+3. Allow termux to run in background in android app settings
