@@ -1,8 +1,14 @@
 # Installation
 1. Install termux and termux:widget from F-droid
 2. In the termux console execute:
+
+2.1. Install packeges
 ```bash
-pkg install git
+pkg install git python python-cryptography
+```
+2.2. Install program
+```bash
+mkdir -p ~/.shortcuts
 cd ~/.shortcuts
 git clone https://github.com/st117168/tg-ws-proxy-android-termux
 sed -i 's/\r$//' ~/.shortcuts/tg-ws-proxy-android-termux/*.sh
@@ -10,3 +16,4 @@ chmod +x ~/.shortcuts/tg-ws-proxy-android-termux/*.sh
 ~/.shortcuts/tg-ws-proxy-android-termux/install_proxy.sh
 rm -rf ~/.shortcuts/tg-ws-proxy-android-termux/{.git,README.md,LICENSE,install_proxy.sh}
 cd ~
+```
