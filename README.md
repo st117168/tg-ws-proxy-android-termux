@@ -2,7 +2,7 @@
 1. Install termux and termux:widget from F-droid
 2. In the termux console execute:
 
-2.1. Install packeges
+2.1. Install packages
 ```bash
 pkg install git python python-cryptography
 ```
