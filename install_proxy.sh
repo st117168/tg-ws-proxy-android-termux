@@ -1,3 +1,5 @@
+#!/bin/bash
+
 pkg install python python-cryptography
 pip install certifi
 
