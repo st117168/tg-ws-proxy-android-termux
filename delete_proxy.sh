@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rm -rf ~/.shortcuts/start_proxy.sh ~/.shortcuts/close_proxy.sh ~/.shortcuts/update_proxy.sh ~/.shortcuts/delete_proxy ~/proxy_log.txt ~/tg-ws-proxy
+rm -rf ~/.shortcuts/tg-ws-proxy-android-termux ~/tg-ws-proxy/proxy_log.txt ~/tg-ws-proxy
