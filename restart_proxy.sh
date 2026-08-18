@@ -23,6 +23,7 @@ cd "$PROXY_DIR" || { echo "$(date +"%Y-%m-%d %H:%M:%S") - error PROXY_DIR" >> ~/
 TEMP_LOG=$(mktemp)
 nohup python tg_ws_proxy.py > "$TEMP_LOG" 2>&1 &
 echo "$(date +"%Y-%m-%d %H:%M:%S") - proxy started." >> ~/tg-ws-proxy/proxy_log.txt
+sleep 1
 
 SECRET=$(extract_secret "$(cat $TEMP_LOG)")
 rm -f "$TEMP_LOG"
