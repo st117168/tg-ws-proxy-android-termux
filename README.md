@@ -14,7 +14,6 @@ git clone https://github.com/st117168/tg-ws-proxy-android-termux
 sed -i 's/\r$//' ~/.shortcuts/tg-ws-proxy-android-termux/*.sh
 chmod +x ~/.shortcuts/tg-ws-proxy-android-termux/*.sh
 ~/.shortcuts/tg-ws-proxy-android-termux/install_proxy.sh
-rm -rf ~/.shortcuts/tg-ws-proxy-android-termux/{.git,README.md,LICENSE,install_proxy.sh}
 cd ~
 ```
 
