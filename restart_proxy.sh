@@ -1,35 +1,33 @@
 #!/bin/bash
 
-PROXY_DIR="$HOME/tg-ws-proxy/proxy"
-PROXY_SERVER="127.0.0.1"
-PROXY_PORT="1443"
+SCRIPT_NAME="restart_proxy.sh"
+source "$(dirname "$0")/lib_common.sh"
 
-PID=$(pgrep -f "tg_ws_proxy.py")
+exec 9>"$LOCK_FILE"
+trap 'exec 9>&-; if [ "$TERMUX_OPENED" -eq 0 ]; then minimize_termux; fi' EXIT
 
-if [ -n "$PID" ]; then
-    kill "$PID"
-    termux-wake-unlock
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - proxy stopped." >> ~/tg-ws-proxy/proxy_log.txt
-else
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - proxy already stopped." >> ~/tg-ws-proxy/proxy_log.txt
+if ! flock -n 9; then
+    log "WARN" "another proxy operation is running, exiting"
+    exit 1
 fi
 
-extract_secret() {
-    echo "$1" | grep -oP "Secret:\s+\K[a-f0-9]+" | head -1
-}
+log "INFO" "restarting proxy with new secret"
+kill_proxy
 
-cd "$PROXY_DIR" || { echo "$(date +"%Y-%m-%d %H:%M:%S") - error PROXY_DIR" >> ~/tg-ws-proxy/proxy_log.txt; exit 1; }
+SECRET=$(start_proxy_process new)
+if [ -z "$SECRET" ]; then
+    log "ERROR" "failed to restart proxy"
+    exit 1
+fi
 
-TEMP_LOG=$(mktemp)
-nohup python tg_ws_proxy.py > "$TEMP_LOG" 2>&1 &
-echo "$(date +"%Y-%m-%d %H:%M:%S") - proxy started." >> ~/tg-ws-proxy/proxy_log.txt
-sleep 1
-
-SECRET=$(extract_secret "$(cat $TEMP_LOG)")
-rm -f "$TEMP_LOG"
-
-if [ -n "$SECRET" ]; then
-    termux-open "tg://proxy?server=$PROXY_SERVER&port=$PROXY_PORT&secret=dd$SECRET"
-        echo "$(date +"%Y-%m-%d %H:%M:%S") - telegram opened." >> ~/tg-ws-proxy/proxy_log.txt
-    termux-wake-lock
+if validate_secret "$SECRET"; then
+    echo "$SECRET" > "$SECRET_FILE"
+    log "OK" "secret saved to $SECRET_FILE"
+    safe_termux_open "tg://proxy?server=$PROXY_SERVER&port=$PROXY_PORT&secret=dd$SECRET"
+    log "OK" "telegram opened with proxy link"
+    wake_lock
+else
+    log "ERROR" "invalid secret received: $SECRET"
+    kill_proxy
+    exit 1
 fi

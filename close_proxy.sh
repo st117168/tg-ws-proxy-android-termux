@@ -1,11 +1,33 @@
 #!/bin/bash
 
-PID=$(pgrep -f "tg_ws_proxy.py")
+SCRIPT_NAME="close_proxy.sh"
+source "$(dirname "$0")/lib_common.sh"
+trap 'if [ "$TERMUX_OPENED" -eq 0 ]; then minimize_termux; fi' EXIT
 
-if [ -n "$PID" ]; then
-    kill "$PID"
-    termux-wake-unlock
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - proxy stopped." >> ~/tg-ws-proxy/proxy_log.txt
+# --- Остановить auto_restart ---
+if [ -f "$AUTO_PID_FILE" ]; then
+    AUTO_PID=$(cat "$AUTO_PID_FILE" 2>/dev/null)
+    if [ -n "$AUTO_PID" ] && kill -0 "$AUTO_PID" 2>/dev/null; then
+        kill "$AUTO_PID" 2>/dev/null
+        for _ in $(seq 1 10); do
+            kill -0 "$AUTO_PID" 2>/dev/null || break
+            sleep 0.3
+        done
+        kill -0 "$AUTO_PID" 2>/dev/null && kill -9 "$AUTO_PID" 2>/dev/null
+        log "INFO" "auto_restart stopped (pid=$AUTO_PID)"
+    else
+        log "WARN" "auto_restart pid file stale, removing"
+    fi
+    rm -f "$AUTO_PID_FILE"
 else
-    echo "$(date +"%Y-%m-%d %H:%M:%S") - proxy already stopped." >> ~/tg-ws-proxy/proxy_log.txt
+    log "WARN" "auto_restart not running"
 fi
+
+# --- Остановить прокси ---
+kill_proxy
+
+# --- Снять wake-lock полностью ---
+wake_release_all
+
+# --- На всякий случай освободить fd 9, если остался ---
+exec 9>&- 2>/dev/null || true
