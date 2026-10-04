@@ -33,6 +33,7 @@ Then just tap a shortcut. Available shortcuts:
 - `close_proxy.sh` — stops the proxy and auto-restart, releases the wake-lock.
 - `update_proxy.sh` — updates tg-ws-proxy from GitHub.
 - `delete_proxy.sh` — removes shortcuts, logs and the proxy directory.
+- `check.sh` — shows the current state: number of running processes (`proxy`, `auto_restart`, `start`, `restart`, `close`), wake-lock counter and whether the saved secret is valid. Read-only, does not change anything.
 
 # Notes
 
