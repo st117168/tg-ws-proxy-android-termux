@@ -28,7 +28,7 @@ fi
 
 # --- 2. certifi ---
 echo "[*] installing certifi via pip..."
-pip install --quiet certifi
+pip install --quiet certifi h2 httpx
 if [ $? -ne 0 ]; then
     echo "[!] WARN: pip install certifi failed (maybe not critical)"
 else
